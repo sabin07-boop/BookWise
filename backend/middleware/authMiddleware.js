@@ -69,7 +69,7 @@ export const requireAdmin = (req, res, next) => {
 };
 
 // ======================================================
-// BACKWARD-COMPATIBILITY ALIASES
+// BACKWARD COMPATIBILITY
 // ======================================================
 
 export const authMiddleware = authenticateToken;
