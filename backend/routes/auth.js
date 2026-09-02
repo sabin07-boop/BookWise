@@ -1,65 +1,68 @@
 import express from "express";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import pool from "../db.js";
 
 const router = express.Router();
 
-const JWT_SECRET = "bookwise_secret_key_2026";
+const JWT_SECRET = process.env.JWT_SECRET || "bookwise_secret_key_2026";
 
-// =====================================
-// REGISTER
-// =====================================
+// ======================================================
+// REGISTER USER
+// ======================================================
 
 router.post("/register", async (req, res) => {
-  const { name, email, password } = req.body;
-
   try {
-    // Basic validation
+    const { name, email, password } = req.body;
+
     if (!name || !email || !password) {
       return res.status(400).json({
-        error: "Name, email and password are required",
+        success: false,
+        error: "All fields are required.",
       });
     }
 
     if (password.length < 6) {
       return res.status(400).json({
-        error: "Password must be at least 6 characters",
+        success: false,
+        error: "Password must be at least 6 characters.",
       });
     }
 
-    // Check if email already exists
-    const existingUser = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email],
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existing = await pool.query(
+      "SELECT id FROM users WHERE LOWER(email) = $1",
+      [normalizedEmail],
     );
 
-    if (existingUser.rows.length > 0) {
+    if (existing.rows.length > 0) {
       return res.status(409).json({
-        error: "Email already registered",
+        success: false,
+        error: "Email already registered.",
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    const result = await pool.query(
+    const newUser = await pool.query(
       `
-      INSERT INTO users (name, email, password)
-      VALUES ($1, $2, $3)
-      RETURNING id, name, email, created_at;
+        INSERT INTO users
+          (name, email, password, role)
+        VALUES
+          ($1, $2, $3, 'user')
+        RETURNING id, name, email, role
       `,
-      [name, email, hashedPassword],
+      [name.trim(), normalizedEmail, hashedPassword],
     );
 
-    const user = result.rows[0];
+    const user = newUser.rows[0];
 
-    // Create JWT
     const token = jwt.sign(
       {
         userId: user.id,
         email: user.email,
+        role: user.role,
       },
       JWT_SECRET,
       {
@@ -67,66 +70,76 @@ router.post("/register", async (req, res) => {
       },
     );
 
-    res.status(201).json({
-      message: "Registration successful",
+    return res.status(201).json({
+      success: true,
+      message: "Registration successful.",
       token,
       user,
     });
-  } catch (error) {
-    console.error("Registration error:", error);
+  } catch (err) {
+    console.error("Register Error:", err);
 
-    res.status(500).json({
-      error: "Registration failed",
+    return res.status(500).json({
+      success: false,
+      error: "Registration failed.",
     });
   }
 });
 
-// =====================================
-// LOGIN
-// =====================================
+// ======================================================
+// LOGIN USER / ADMIN
+// ======================================================
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
   try {
+    const { email, password } = req.body;
+
     if (!email || !password) {
       return res.status(400).json({
-        error: "Email and password are required",
+        success: false,
+        error: "Email and password are required.",
       });
     }
 
-    // Find user
+    const normalizedEmail = email.trim().toLowerCase();
+
     const result = await pool.query(
       `
-      SELECT id, name, email, password, created_at
-      FROM users
-      WHERE email = $1;
+        SELECT
+          id,
+          name,
+          email,
+          password,
+          role
+        FROM users
+        WHERE LOWER(email) = $1
       `,
-      [email],
+      [normalizedEmail],
     );
 
     if (result.rows.length === 0) {
       return res.status(401).json({
-        error: "Invalid email or password",
+        success: false,
+        error: "Invalid email or password.",
       });
     }
 
     const user = result.rows[0];
 
-    // Compare password
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const validPassword = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
+    if (!validPassword) {
       return res.status(401).json({
-        error: "Invalid email or password",
+        success: false,
+        error: "Invalid email or password.",
       });
     }
 
-    // Create JWT
     const token = jwt.sign(
       {
         userId: user.id,
         email: user.email,
+        role: user.role,
       },
       JWT_SECRET,
       {
@@ -134,21 +147,100 @@ router.post("/login", async (req, res) => {
       },
     );
 
-    // Never send password back
-    delete user.password;
-
-    res.json({
-      message: "Login successful",
+    return res.json({
+      success: true,
+      message: "Login successful.",
       token,
-      user,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
     });
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch (err) {
+    console.error("Login Error:", err);
 
-    res.status(500).json({
-      error: "Login failed",
+    return res.status(500).json({
+      success: false,
+      error: "Login failed.",
     });
   }
 });
+
+// ======================================================
+// CURRENT USER PROFILE
+// ======================================================
+
+router.get("/me", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({
+        success: false,
+        error: "Token missing.",
+      });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        error: "Authentication token missing.",
+      });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+
+    const result = await pool.query(
+      `
+        SELECT
+          id,
+          name,
+          email,
+          role
+        FROM users
+        WHERE id = $1
+      `,
+      [decoded.userId],
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: "User not found.",
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: result.rows[0],
+    });
+  } catch (err) {
+    console.error("Auth /me Error:", err);
+
+    return res.status(401).json({
+      success: false,
+      error: "Invalid or expired token.",
+    });
+  }
+});
+
+// ======================================================
+// LOGOUT
+// ======================================================
+
+router.post("/logout", (req, res) => {
+  return res.json({
+    success: true,
+    message: "Logout successful.",
+  });
+});
+
+// ======================================================
+// EXPORT
+// ======================================================
 
 export default router;

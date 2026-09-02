@@ -57,112 +57,91 @@ router.get("/", authMiddleware, async (req, res) => {
 // POST /api/favorites
 // ======================================================
 
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/api/favorites", authMiddleware, async (req, res) => {
+  const userId = req.user.id;
+
+  const { book_id, google_book_id, googleBookId } = req.body;
+
+  const identifier = String(
+    book_id || google_book_id || googleBookId || "",
+  ).trim();
+
+  if (!identifier) {
+    return res.status(400).json({
+      success: false,
+      error: "book_id or google_book_id is required",
+    });
+  }
+
   try {
-    const { book_id } = req.body;
+    // Automatically resolve/import Google book
+    const book = await ensureBookInDatabase(identifier);
 
-    // --------------------------------------------------
-    // Validate book_id
-    // --------------------------------------------------
+    const bookId = book.id;
 
-    if (book_id === undefined || book_id === null || book_id === "") {
-      return res.status(400).json({
-        error: "book_id is required",
-      });
-    }
-
-    const bookId = Number(book_id);
-
-    if (!Number.isInteger(bookId)) {
-      return res.status(400).json({
-        error: "book_id must be a valid integer",
-      });
-    }
-
-    // --------------------------------------------------
-    // Check whether book exists
-    // --------------------------------------------------
-
-    const bookResult = await pool.query(
-      `
-      SELECT id
-      FROM books
-      WHERE id = $1
-      `,
-      [bookId],
-    );
-
-    if (bookResult.rows.length === 0) {
-      return res.status(404).json({
-        error: "Book not found",
-      });
-    }
-
-    // --------------------------------------------------
-    // Check duplicate favorite
-    // --------------------------------------------------
-
+    // Check existing favorite
     const existingFavorite = await pool.query(
       `
-        SELECT id
-        FROM favorites
-        WHERE user_id = $1
+      SELECT id
+      FROM favorites
+      WHERE user_id = $1
         AND book_id = $2
-        `,
-      [req.user.id, bookId],
+      LIMIT 1;
+      `,
+      [userId, bookId],
     );
 
     if (existingFavorite.rows.length > 0) {
       return res.status(409).json({
+        success: false,
         error: "Book is already in favorites",
-        favorite: existingFavorite.rows[0],
       });
     }
-
-    // --------------------------------------------------
-    // Insert favorite
-    // --------------------------------------------------
 
     const result = await pool.query(
       `
       INSERT INTO favorites
-        (
-          user_id,
-          book_id
-        )
+      (
+        user_id,
+        book_id,
+        created_at
+      )
       VALUES
-        (
-          $1,
-          $2
-        )
+      (
+        $1,
+        $2,
+        CURRENT_TIMESTAMP
+      )
       RETURNING
         id,
         user_id,
         book_id,
-        created_at
+        created_at;
       `,
-      [req.user.id, bookId],
+      [userId, bookId],
     );
 
-    console.log(`Book ${bookId} added to favorites for user ${req.user.id}`);
-
     res.status(201).json({
+      success: true,
+
       message: "Book added to favorites",
 
       favorite: result.rows[0],
+
+      book: {
+        id: book.id,
+        google_book_id: book.google_book_id,
+        title: book.title,
+        author: book.author,
+        cover_url: book.cover_url,
+      },
     });
   } catch (error) {
     console.error("Add favorite error:", error);
 
-    // PostgreSQL duplicate key
-    if (error.code === "23505") {
-      return res.status(409).json({
-        error: "Book is already in favorites",
-      });
-    }
-
     res.status(500).json({
-      error: "Failed to add favorite",
+      success: false,
+      error: error.message || "Failed to add favorite",
     });
   }
 });
@@ -171,71 +150,61 @@ router.post("/", authMiddleware, async (req, res) => {
 // REMOVE FAVORITE
 // DELETE /api/favorites/:bookId
 // ======================================================
+app.delete("/api/favorites/:bookId", authenticateToken, async (req, res) => {
+  const identifier = String(req.params.bookId || "").trim();
 
-router.delete("/:bookId", authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+
+  if (!identifier) {
+    return res.status(400).json({
+      success: false,
+      error: "Book ID is required",
+    });
+  }
+
   try {
-    const bookId = Number(req.params.bookId);
-
-    // ------------------------------------------------
-    // Validate book ID
-    // ------------------------------------------------
-
-    if (!Number.isInteger(bookId)) {
-      return res.status(400).json({
-        error: "Invalid book ID",
-      });
-    }
-
-    console.log(
-      `Removing book ${bookId} from favorites for user ${req.user.id}`,
-    );
-
-    // ------------------------------------------------
-    // Delete favorite
-    // ------------------------------------------------
+    const book = await ensureBookInDatabase(identifier);
 
     const result = await pool.query(
       `
-          DELETE FROM favorites
+        DELETE FROM favorites
 
-          WHERE user_id = $1
+        WHERE user_id = $1
           AND book_id = $2
 
-          RETURNING
-            id,
-            user_id,
-            book_id,
-            created_at
-          `,
-      [req.user.id, bookId],
+        RETURNING
+          id,
+          user_id,
+          book_id,
+          created_at;
+        `,
+      [userId, book.id],
     );
-
-    // ------------------------------------------------
-    // Favorite doesn't exist
-    // ------------------------------------------------
 
     if (result.rows.length === 0) {
       return res.status(404).json({
+        success: false,
         error: "Favorite not found",
       });
     }
 
-    console.log(`Book ${bookId} removed from favorites`);
+    res.json({
+      success: true,
 
-    // ------------------------------------------------
-    // Success
-    // ------------------------------------------------
-
-    res.status(200).json({
       message: "Book removed from favorites",
 
       favorite: result.rows[0],
+
+      book_id: book.id,
+
+      google_book_id: book.google_book_id || null,
     });
   } catch (error) {
     console.error("Remove favorite error:", error);
 
     res.status(500).json({
-      error: "Failed to remove favorite",
+      success: false,
+      error: error.message || "Failed to remove favorite",
     });
   }
 });

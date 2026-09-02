@@ -1,6 +1,14 @@
 import { useState } from "react";
 
-function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
+function Navbar({
+  user,
+  search,
+  setSearch,
+  onLogout,
+  favorites = [],
+  onLogin,
+  onRegister,
+}) {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const getBookId = (favorite) => {
@@ -23,20 +31,14 @@ function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
 
   return (
     <>
-      {/* =========================================
-          NAVBAR
-      ========================================= */}
-
       <nav className="navbar">
         {/* LOGO */}
-
         <div className="navbar-logo">
           <span className="logo-icon">📚</span>
           <span>BookWise</span>
         </div>
 
         {/* SEARCH */}
-
         <div className="search-container">
           <span className="search-icon">🔍</span>
 
@@ -49,46 +51,85 @@ function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
         </div>
 
         {/* RIGHT SIDE */}
-
         <div className="navbar-right">
-          {/* =====================================
-              FAVORITES BUTTON
-          ===================================== */}
+          {/* ===============================
+              LOGGED-IN USER
+          =============================== */}
 
-          <button
-            type="button"
-            className={`navbar-favorite-button ${
-              showFavorites ? "active" : ""
-            }`}
-            onClick={() => setShowFavorites((previous) => !previous)}
-            title="My Favorites"
-          >
-            {favorites.length > 0 ? "♥" : "♡"}
+          {user ? (
+            <>
+              {/* FAVORITES */}
 
-            {favorites.length > 0 && (
-              <span className="favorite-count">{favorites.length}</span>
-            )}
-          </button>
+              <button
+                type="button"
+                className={`navbar-favorite-button ${
+                  showFavorites ? "active" : ""
+                }`}
+                onClick={() => setShowFavorites((previous) => !previous)}
+                title="My Favorites"
+              >
+                {favorites.length > 0 ? "♥" : "♡"}
 
-          {/* USER */}
+                {favorites.length > 0 && (
+                  <span className="favorite-count">{favorites.length}</span>
+                )}
+              </button>
 
-          <div className="user-avatar">
-            {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
-          </div>
+              {/* USER */}
 
-          <span className="user-name">{user?.name || "User"}</span>
+              <div className="user-avatar">
+                {user?.name ? user.name.charAt(0).toUpperCase() : "U"}
+              </div>
 
-          <button type="button" className="logout-button" onClick={onLogout}>
-            Logout
-          </button>
+              <span className="user-name">{user?.name || "User"}</span>
+
+              {/* LOGOUT */}
+
+              <button
+                type="button"
+                className="logout-button"
+                onClick={onLogout}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              {/* ===============================
+                  PUBLIC USER
+              =============================== */}
+
+              <button
+                type="button"
+                className="nav-login-button"
+                onClick={() => {
+                  console.log("LOGIN BUTTON CLICKED");
+                  onLogin?.();
+                }}
+              >
+                Login
+              </button>
+
+              <button
+                type="button"
+                className="nav-register-button"
+                onClick={() => {
+                  console.log("REGISTER BUTTON CLICKED");
+                  onRegister?.();
+                }}
+              >
+                Register
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
-      {/* =========================================
+      {/* =====================================================
           FAVORITES PANEL
-      ========================================= */}
+      ===================================================== */}
 
-      {showFavorites && (
+      {showFavorites && user && (
         <div className="favorites-panel">
           <div className="favorites-header">
             <div>
@@ -104,9 +145,7 @@ function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
             </button>
           </div>
 
-          {/* =====================================
-              EMPTY
-          ===================================== */}
+          {/* EMPTY */}
 
           {favorites.length === 0 ? (
             <div className="favorites-empty">
@@ -120,11 +159,8 @@ function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
             <div className="favorites-list">
               {favorites.map((favorite, index) => {
                 const bookId = getBookId(favorite);
-
                 const title = getTitle(favorite);
-
                 const author = getAuthor(favorite);
-
                 const cover = getCover(favorite);
 
                 return (
@@ -146,11 +182,10 @@ function Navbar({ user, search, setSearch, onLogout, favorites = [] }) {
                       <div className="favorite-no-cover">📖</div>
                     )}
 
-                    {/* BOOK INFO */}
+                    {/* INFO */}
 
                     <div className="favorite-item-info">
                       <h4>{title}</h4>
-
                       <p>{author}</p>
                     </div>
 
