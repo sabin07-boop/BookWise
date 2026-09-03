@@ -7748,3 +7748,1063 @@ footer {
     animation: none !important;
   }
 }
+
+/* =====================================================
+   PREMIUM BOOK CARD — DARK / GOLD BOOKSTORE STYLE
+   Applied to every BookCard in the catalog and carousels.
+===================================================== */
+
+.book-card.premium-book-card {
+  background: linear-gradient(160deg, #1c1a15 0%, #13110d 100%);
+  border: 1px solid rgba(255, 220, 120, 0.12);
+  border-radius: 20px;
+  box-shadow:
+    0 18px 38px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 255, 255, 0.025);
+  overflow: hidden;
+  color: #f0e8d5;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.book-card.premium-book-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(245, 200, 66, 0.3);
+  box-shadow:
+    0 28px 55px rgba(0, 0, 0, 0.36),
+    0 0 28px rgba(245, 200, 66, 0.055);
+}
+
+.book-card.premium-book-card:focus-visible {
+  outline: 3px solid rgba(245, 200, 66, 0.38);
+  outline-offset: 3px;
+}
+
+.premium-book-cover-wrapper {
+  height: 255px;
+  aspect-ratio: auto;
+  background: #17140f;
+  overflow: hidden;
+}
+
+.premium-book-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  transition: transform 0.45s ease;
+}
+
+.book-card.premium-book-card:hover .premium-book-cover {
+  transform: scale(1.055);
+}
+
+.premium-cover-gradient {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(10, 9, 7, 0.03) 34%,
+    rgba(19, 17, 13, 0.92) 100%
+  );
+}
+
+.premium-genre-badge,
+.premium-favorite-btn,
+.premium-view-details {
+  position: absolute;
+  z-index: 3;
+}
+
+.premium-genre-badge {
+  top: 14px;
+  left: 14px;
+  max-width: calc(100% - 70px);
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: rgba(19, 17, 13, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 220, 120, 0.2);
+  color: rgba(245, 200, 66, 0.92);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium-favorite-btn {
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(19, 17, 13, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 220, 120, 0.18);
+  color: rgba(255, 255, 255, 0.62);
+  transition: all 0.2s ease;
+}
+
+.premium-favorite-btn:hover,
+.premium-favorite-btn.active {
+  color: #f5c842;
+  border-color: rgba(245, 200, 66, 0.4);
+  background: rgba(19, 17, 13, 0.9);
+  transform: scale(1.06);
+}
+
+.premium-view-details {
+  left: 50%;
+  bottom: 17px;
+  transform: translate(-50%, 10px);
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(245, 239, 222, 0.95);
+  color: #272116;
+  font-size: 12px;
+  font-weight: 800;
+  opacity: 0;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  pointer-events: none;
+}
+
+.book-card.premium-book-card:hover .premium-view-details {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.premium-book-info {
+  padding: 19px 20px 20px;
+}
+
+.premium-title-area h3 {
+  margin: 0;
+  color: #f0e8d5;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.16;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.premium-title-area .book-author {
+  margin: 7px 0 0;
+  color: rgba(240, 232, 213, 0.46);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium-divider {
+  height: 1px;
+  margin: 14px 0;
+  background: linear-gradient(to right, rgba(255, 220, 120, 0.16), transparent);
+}
+
+.premium-rating-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 22px;
+}
+
+.premium-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.premium-stars {
+  display: flex;
+  gap: 2px;
+  color: #f5c842;
+}
+
+.premium-rating-value {
+  color: #f0e8d5;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.premium-rating-count,
+.premium-pages {
+  color: rgba(240, 232, 213, 0.35);
+  font-size: 11px;
+}
+
+.premium-pages {
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+.premium-bottom-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 17px;
+}
+
+.premium-price-block {
+  flex: 1;
+  min-width: 0;
+}
+
+.premium-price-block span {
+  display: block;
+  margin-bottom: 2px;
+  color: rgba(240, 232, 213, 0.35);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.premium-price-block strong {
+  display: block;
+  color: #f5c842;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.premium-cart-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 11px;
+  color: #0d0d0a;
+  background: linear-gradient(135deg, #c9a227, #a07c15);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.premium-cart-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.premium-cart-btn.disabled,
+.premium-cart-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.premium-review-btn {
+  width: 100%;
+  margin-top: 10px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 220, 120, 0.11);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.025);
+  color: rgba(240, 232, 213, 0.55);
+  font-size: 10px;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.premium-review-btn svg {
+  width: 12px;
+  height: 12px;
+  color: #f5c842;
+}
+
+.premium-review-btn:hover {
+  border-color: rgba(245, 200, 66, 0.24);
+  color: #f0e8d5;
+  background: rgba(245, 200, 66, 0.06);
+}
+
+/* Carousel sizing */
+.book-carousel .book-card.premium-book-card {
+  flex: 0 0 245px;
+  width: 245px;
+}
+
+/* Discovery sections get a subtle dark-gold atmosphere without changing layout. */
+.discovery-section .book-carousel {
+  padding: 8px 4px 15px;
+}
+
+.discovery-section .book-carousel::-webkit-scrollbar-thumb {
+  background: rgba(185, 151, 48, 0.42);
+}
+
+@media (max-width: 900px) {
+  .book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  }
+
+  .premium-book-cover-wrapper {
+    height: 245px;
+  }
+}
+
+@media (max-width: 560px) {
+  .book-card.premium-book-card {
+    border-radius: 17px;
+  }
+
+  .premium-book-cover-wrapper {
+    height: 230px;
+  }
+
+  .premium-book-info {
+    padding: 17px;
+  }
+
+  .premium-title-area h3 {
+    font-size: 19px;
+  }
+
+  .premium-cart-btn {
+    padding: 0 12px;
+  }
+
+  .book-carousel .book-card.premium-book-card {
+    flex-basis: 225px;
+    width: 225px;
+  }
+}
+
+/* =========================================================
+   BOOKWISE — COMPACT 6+ BOOK SHELF
+   Final override for discovery/catalog shelves.
+   Goal: show 6+ complete books on a normal desktop viewport,
+   keep typography readable, and preserve generous breathing room.
+   ========================================================= */
+
+.discovery-section {
+  overflow: visible;
+}
+
+.discovery-carousel {
+  position: relative;
+  overflow: visible;
+  padding: 0 2px;
+}
+
+.discovery-carousel .book-carousel {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  padding: 8px 5px 18px !important;
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  scroll-padding-inline: 5px;
+  scrollbar-width: thin;
+}
+
+/* Six compact cards fit comfortably in ~1200px of content width. */
+.discovery-carousel .book-card.premium-book-card {
+  box-sizing: border-box !important;
+  flex: 0 0 188px !important;
+  width: 188px !important;
+  min-width: 188px !important;
+  max-width: 188px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  align-self: stretch !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: #fff !important;
+  color: #172033 !important;
+  border: 1px solid #e4e8ef !important;
+  box-shadow: 0 7px 20px rgba(20, 30, 50, 0.08) !important;
+  transform: translateZ(0);
+  transition:
+    transform 0.28s cubic-bezier(0.2, 0.75, 0.25, 1),
+    box-shadow 0.28s ease,
+    border-color 0.28s ease !important;
+}
+
+.discovery-carousel .book-card.premium-book-card:hover {
+  transform: translateY(-7px) !important;
+  border-color: rgba(99, 75, 210, 0.35) !important;
+  box-shadow: 0 17px 34px rgba(65, 52, 150, 0.17) !important;
+}
+
+.discovery-carousel .premium-book-cover-wrapper {
+  position: relative !important;
+  flex: 0 0 238px !important;
+  width: 100% !important;
+  height: 238px !important;
+  min-height: 238px !important;
+  aspect-ratio: auto !important;
+  background: #f3f4f6 !important;
+  overflow: hidden !important;
+}
+
+.discovery-carousel .premium-book-cover {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  transition:
+    transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 0.35s ease !important;
+}
+
+.discovery-carousel .book-card.premium-book-card:hover .premium-book-cover {
+  transform: scale(1.045) !important;
+  filter: saturate(1.05) contrast(1.02) !important;
+}
+
+/* Soft readable image treatment rather than a heavy dark overlay. */
+.discovery-carousel .premium-cover-gradient {
+  background: linear-gradient(
+    180deg,
+    rgba(15, 23, 42, 0.02) 45%,
+    rgba(15, 23, 42, 0.16) 100%
+  ) !important;
+}
+
+.discovery-carousel .premium-genre-badge {
+  top: 9px !important;
+  left: 9px !important;
+  max-width: calc(100% - 54px) !important;
+  padding: 4px 8px !important;
+  border-radius: 999px !important;
+  background: rgba(17, 24, 39, 0.86) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  color: #fff !important;
+  font-size: 8px !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.07em !important;
+}
+
+.discovery-carousel .premium-favorite-btn {
+  top: 8px !important;
+  right: 8px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: rgba(17, 24, 39, 0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  color: #fff !important;
+  -webkit-backdrop-filter:blur(8px);
+  backdrop-filter: blur(8px);
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    color 0.22s ease !important;
+}
+
+.discovery-carousel .premium-favorite-btn:hover,
+.discovery-carousel .premium-favorite-btn.active {
+  transform: scale(1.1) !important;
+  background: #fff !important;
+  color: #e11d48 !important;
+}
+
+.discovery-carousel .premium-view-details {
+  bottom: 11px !important;
+  padding: 7px 11px !important;
+  border-radius: 8px !important;
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  color: #312e81 !important;
+  box-shadow: 0 5px 15px rgba(15, 23, 42, 0.15);
+}
+
+.discovery-carousel .premium-book-info {
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  padding: 11px 11px 10px !important;
+  background: #fff !important;
+}
+
+.discovery-carousel .premium-title-area {
+  min-height: 58px !important;
+}
+
+.discovery-carousel .premium-title-area h3 {
+  margin: 0 !important;
+  color: #111827 !important;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.25 !important;
+  letter-spacing: -0.015em !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+.discovery-carousel .premium-title-area .book-author {
+  margin: 5px 0 0 !important;
+  color: #64748b !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.055em !important;
+  line-height: 1.25 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.discovery-carousel .premium-divider {
+  height: 1px !important;
+  margin: 7px 0 !important;
+  background: #edf0f5 !important;
+}
+
+.discovery-carousel .premium-rating-row {
+  min-height: 18px !important;
+  gap: 5px !important;
+}
+
+.discovery-carousel .premium-rating {
+  gap: 4px !important;
+}
+
+.discovery-carousel .premium-stars {
+  gap: 1px !important;
+  color: #eab308 !important;
+}
+
+.discovery-carousel .premium-stars svg {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.discovery-carousel .premium-rating-value {
+  color: #111827 !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.discovery-carousel .premium-rating-count,
+.discovery-carousel .premium-pages {
+  color: #94a3b8 !important;
+  font-size: 8px !important;
+}
+
+.discovery-carousel .premium-bottom-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 6px !important;
+  margin-top: 8px !important;
+}
+
+.discovery-carousel .premium-price-block {
+  min-width: 0 !important;
+}
+
+.discovery-carousel .premium-price-block span {
+  margin-bottom: 2px !important;
+  color: #94a3b8 !important;
+  font-size: 7px !important;
+  line-height: 1 !important;
+  letter-spacing: 0.09em !important;
+}
+
+.discovery-carousel .premium-price-block strong {
+  color: #a16207 !important;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+  line-height: 1.15 !important;
+}
+
+.discovery-carousel .premium-cart-btn {
+  flex: 0 0 auto !important;
+  min-height: 34px !important;
+  padding: 0 9px !important;
+  gap: 4px !important;
+  border-radius: 9px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #5b3cc4, #7046dc) !important;
+  box-shadow: 0 6px 14px rgba(91, 60, 196, 0.18) !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    filter 0.22s ease !important;
+}
+
+.discovery-carousel .premium-cart-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.discovery-carousel .premium-cart-btn:hover:not(:disabled) {
+  transform: translateY(-2px) !important;
+  filter: brightness(1.07) !important;
+  box-shadow: 0 9px 18px rgba(91, 60, 196, 0.27) !important;
+}
+
+.discovery-carousel .premium-review-btn {
+  margin-top: 7px !important;
+  min-height: 29px !important;
+  padding: 0 8px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 8px !important;
+  background: #f8fafc !important;
+  color: #475569 !important;
+  font-size: 8px !important;
+  font-weight: 800 !important;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease !important;
+}
+
+.discovery-carousel .premium-review-btn:hover {
+  transform: translateX(2px) !important;
+  border-color: #c4b5fd !important;
+  background: #f5f3ff !important;
+  color: #5b21b6 !important;
+}
+
+.discovery-carousel .premium-review-btn svg {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* Staggered entrance animation makes a shelf feel intentional, not static. */
+.discovery-carousel .book-card.premium-book-card {
+  animation: bookShelfReveal 0.55s cubic-bezier(0.2, 0.75, 0.25, 1) both;
+}
+
+.discovery-carousel .book-card.premium-book-card:nth-child(2) {
+  animation-delay: 0.04s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(3) {
+  animation-delay: 0.08s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(4) {
+  animation-delay: 0.12s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(5) {
+  animation-delay: 0.16s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(6) {
+  animation-delay: 0.2s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(7) {
+  animation-delay: 0.24s;
+}
+.discovery-carousel .book-card.premium-book-card:nth-child(8) {
+  animation-delay: 0.28s;
+}
+
+@keyframes bookShelfReveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Keep arrows outside the cards and never cover book information. */
+.discovery-carousel .discovery-arrow {
+  width: 36px !important;
+  height: 36px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  color: #5b3cc4 !important;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14) !important;
+}
+
+.discovery-carousel .discovery-arrow:hover {
+  background: #f5f3ff !important;
+  transform: translateY(-50%) scale(1.08) !important;
+}
+
+/* Full catalog grid also becomes compact enough to show more books. */
+.book-grid .book-card.premium-book-card {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 1200px) {
+  .discovery-carousel .book-card.premium-book-card {
+    flex-basis: 188px !important;
+    width: 188px !important;
+    min-width: 188px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .discovery-carousel .book-card.premium-book-card {
+    flex-basis: 180px !important;
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+  .discovery-carousel .premium-book-cover-wrapper {
+    height: 228px !important;
+    min-height: 228px !important;
+    flex-basis: 228px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .discovery-carousel .book-carousel {
+    gap: 10px !important;
+    padding-inline: 2px !important;
+  }
+  .discovery-carousel .book-card.premium-book-card {
+    flex-basis: 168px !important;
+    width: 168px !important;
+    min-width: 168px !important;
+  }
+  .discovery-carousel .premium-book-cover-wrapper {
+    height: 214px !important;
+    min-height: 214px !important;
+    flex-basis: 214px !important;
+  }
+  .discovery-carousel .premium-book-info {
+    padding: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .discovery-carousel .book-card.premium-book-card {
+    flex-basis: 160px !important;
+    width: 160px !important;
+    min-width: 160px !important;
+  }
+  .discovery-carousel .premium-book-cover-wrapper {
+    height: 204px !important;
+    min-height: 204px !important;
+    flex-basis: 204px !important;
+  }
+  .discovery-carousel .premium-title-area h3 {
+    font-size: 12px !important;
+  }
+  .discovery-carousel .premium-cart-btn span {
+    display: none;
+  }
+  .discovery-carousel .premium-cart-btn {
+    width: 34px !important;
+    padding: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .discovery-carousel .book-card.premium-book-card,
+  .discovery-carousel .premium-book-cover,
+  .discovery-carousel .premium-favorite-btn,
+  .discovery-carousel .premium-cart-btn,
+  .discovery-carousel .premium-review-btn {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* =========================================================
+   BOOKWISE — DATABASE LIBRARY HORIZONTAL SHELVES
+   The database catalog uses the exact same visual language as
+   Suggested For You / Popular Books. Up to 30 books live in
+   each row; rows remain independently left/right swipeable.
+   ========================================================= */
+
+.database-books-section {
+  margin-top: 34px !important;
+  overflow: visible !important;
+}
+
+.database-books-header {
+  margin-bottom: 16px !important;
+  align-items: flex-end !important;
+}
+
+.database-books-header > div:first-child {
+  min-width: 0;
+}
+
+.database-books-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 5px;
+  color: #5b3cc4;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.database-books-eyebrow::before {
+  content: "";
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: #eab308;
+}
+
+.database-books-header h2 {
+  margin-bottom: 4px !important;
+}
+
+.database-books-header p {
+  color: #7b8292 !important;
+  font-size: 13px !important;
+}
+
+.database-books-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.database-swipe-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid #e4e1ff;
+  border-radius: 999px;
+  background: #f8f7ff;
+  color: #5b3cc4;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  animation: databaseSwipePulse 2.4s ease-in-out infinite;
+}
+
+.database-book-shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.database-book-row {
+  width: 100%;
+  overflow: visible !important;
+}
+
+.database-book-row .book-carousel {
+  width: 100%;
+  gap: 12px !important;
+  padding: 8px 5px 18px !important;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scrollbar-width: none !important;
+  cursor: grab;
+}
+
+.database-book-row .book-carousel:active {
+  cursor: grabbing;
+}
+
+.database-book-row .book-carousel::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+/* Keep the database shelf card identical to discovery cards. */
+.database-book-row .book-card.premium-book-card {
+  flex: 0 0 188px !important;
+  width: 188px !important;
+  min-width: 188px !important;
+  max-width: 188px !important;
+}
+
+/* A row intentionally contains up to 30 cards from BookGrid. */
+.database-book-row .book-card.premium-book-card:nth-child(9),
+.database-book-row .book-card.premium-book-card:nth-child(10),
+.database-book-row .book-card.premium-book-card:nth-child(11),
+.database-book-row .book-card.premium-book-card:nth-child(12),
+.database-book-row .book-card.premium-book-card:nth-child(13),
+.database-book-row .book-card.premium-book-card:nth-child(14),
+.database-book-row .book-card.premium-book-card:nth-child(15),
+.database-book-row .book-card.premium-book-card:nth-child(16),
+.database-book-row .book-card.premium-book-card:nth-child(17),
+.database-book-row .book-card.premium-book-card:nth-child(18),
+.database-book-row .book-card.premium-book-card:nth-child(19),
+.database-book-row .book-card.premium-book-card:nth-child(20),
+.database-book-row .book-card.premium-book-card:nth-child(21),
+.database-book-row .book-card.premium-book-card:nth-child(22),
+.database-book-row .book-card.premium-book-card:nth-child(23),
+.database-book-row .book-card.premium-book-card:nth-child(24),
+.database-book-row .book-card.premium-book-card:nth-child(25),
+.database-book-row .book-card.premium-book-card:nth-child(26),
+.database-book-row .book-card.premium-book-card:nth-child(27),
+.database-book-row .book-card.premium-book-card:nth-child(28),
+.database-book-row .book-card.premium-book-card:nth-child(29),
+.database-book-row .book-card.premium-book-card:nth-child(30) {
+  animation-delay: 0.32s;
+}
+
+.database-book-row .discovery-arrow {
+  top: 45%;
+  width: 38px !important;
+  height: 38px !important;
+  z-index: 20;
+}
+
+.database-book-row .scroll-arrow-left {
+  left: -10px !important;
+}
+
+.database-book-row .scroll-arrow-right {
+  right: -10px !important;
+}
+
+.database-book-row .scroll-arrow:not(:disabled) {
+  animation: databaseArrowFloat 2.8s ease-in-out infinite;
+}
+
+@keyframes databaseSwipePulse {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.78;
+  }
+  50% {
+    transform: translateX(3px);
+    opacity: 1;
+  }
+}
+
+@keyframes databaseArrowFloat {
+  0%,
+  100% {
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+  }
+  50% {
+    box-shadow: 0 12px 25px rgba(91, 60, 196, 0.23);
+  }
+}
+
+@media (min-width: 1400px) {
+  .database-book-row .book-card.premium-book-card {
+    flex-basis: 188px !important;
+    width: 188px !important;
+    min-width: 188px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .database-book-row .book-card.premium-book-card {
+    flex-basis: 180px !important;
+    width: 180px !important;
+    min-width: 180px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .database-books-header {
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  .database-books-meta {
+    align-self: flex-start;
+  }
+
+  .database-swipe-hint {
+    display: none;
+  }
+
+  .database-book-shelves {
+    gap: 16px;
+  }
+
+  .database-book-row .book-carousel {
+    gap: 10px !important;
+    padding-inline: 2px !important;
+  }
+
+  .database-book-row .book-card.premium-book-card {
+    flex-basis: 168px !important;
+    width: 168px !important;
+    min-width: 168px !important;
+  }
+
+  .database-book-row .discovery-arrow {
+    width: 34px !important;
+    height: 34px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .database-books-section {
+    margin-top: 25px !important;
+  }
+
+  .database-books-header p {
+    font-size: 11px !important;
+  }
+
+  .database-book-row .book-card.premium-book-card {
+    flex-basis: 160px !important;
+    width: 160px !important;
+    min-width: 160px !important;
+  }
+
+  .database-book-row .discovery-arrow {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .database-swipe-hint,
+  .database-book-row .scroll-arrow:not(:disabled) {
+    animation: none !important;
+  }
+}

@@ -150,6 +150,58 @@ function useUsageTracker({
    BOOK CARD
 ====================================================== */
 
+function HeartIcon({ filled }) {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  );
+}
+
+function StarIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
+
+function CartIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="9" cy="21" r="1" />
+      <circle cx="20" cy="21" r="1" />
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    </svg>
+  );
+}
+
 function BookCard({ book, isFavorite, onFavorite, onOpen, onAddToCart }) {
   const openBook = (event) => {
     event?.stopPropagation();
@@ -158,13 +210,22 @@ function BookCard({ book, isFavorite, onFavorite, onOpen, onAddToCart }) {
 
   const rawPrice = book.sale_price_npr ?? book.price_npr;
   const price = Number(rawPrice);
-  const hasPrice = rawPrice !== null && rawPrice !== undefined && rawPrice !== "" && Number.isFinite(price);
+  const hasPrice =
+    rawPrice !== null &&
+    rawPrice !== undefined &&
+    rawPrice !== "" &&
+    Number.isFinite(price);
   const isForSale = Boolean(book.is_for_sale && hasPrice);
   const rating = Number(book.average_rating);
+  const ratingCount = Number(
+    book.ratings_count ?? book.total_ratings ?? book.rating_count,
+  );
+  const pageCount = book.page_count ?? book.pages ?? book.num_pages;
+  const genre = book.genre || book.category || book.categories || "Featured";
 
   return (
     <article
-      className="book-card"
+      className="book-card premium-book-card"
       onClick={openBook}
       onKeyDown={(event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -174,41 +235,83 @@ function BookCard({ book, isFavorite, onFavorite, onOpen, onAddToCart }) {
       }}
       tabIndex={0}
     >
-      <div className="book-cover-wrapper">
+      <div className="book-cover-wrapper premium-book-cover-wrapper">
         <img
-          src={book.cover_url || "https://via.placeholder.com/300x450?text=No+Cover"}
+          src={
+            book.cover_url ||
+            "https://via.placeholder.com/300x450?text=No+Cover"
+          }
           alt={book.title || "Book cover"}
-          className="book-cover"
+          className="book-cover premium-book-cover"
           loading="lazy"
           onError={(event) => {
             event.currentTarget.onerror = null;
-            event.currentTarget.src = "https://via.placeholder.com/300x450?text=No+Cover";
+            event.currentTarget.src =
+              "https://via.placeholder.com/300x450?text=No+Cover";
           }}
         />
-        <div className="book-overlay"><span>View Details</span></div>
+
+        <div className="premium-cover-gradient" />
+
+        <div className="premium-genre-badge">{String(genre).split(",")[0]}</div>
+
+        <button
+          type="button"
+          className={`premium-favorite-btn ${isFavorite ? "active" : ""}`}
+          onClick={(event) => {
+            event.stopPropagation();
+            onFavorite(book);
+          }}
+          title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          aria-pressed={isFavorite}
+        >
+          <HeartIcon filled={isFavorite} />
+        </button>
+
+        <div className="premium-view-details">View Details</div>
       </div>
 
-      <div className="book-info">
-        <div className="book-title-wrap">
+      <div className="book-info premium-book-info">
+        <div className="premium-title-area">
           <h3 title={book.title}>{book.title || "Untitled Book"}</h3>
           <p className="book-author" title={book.author || "Unknown Author"}>
             {book.author || "Unknown Author"}
           </p>
         </div>
 
-        <div className="book-card-meta">
-          <span className="book-rating">
-            <span aria-hidden="true">★</span> {Number.isFinite(rating) ? rating.toFixed(1) : "0.0"}
-          </span>
-          <span className={`book-price ${hasPrice ? "has-price" : "no-price"}`}>
-            {hasPrice ? `$${price.toLocaleString()}` : "Price —"}
-          </span>
+        <div className="premium-divider" />
+
+        <div className="premium-rating-row">
+          <div className="premium-rating">
+            <span className="premium-stars">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <StarIcon key={i} />
+              ))}
+            </span>
+            <span className="premium-rating-value">
+              {Number.isFinite(rating) ? rating.toFixed(1) : "0.0"}
+            </span>
+            {Number.isFinite(ratingCount) && ratingCount > 0 && (
+              <span className="premium-rating-count">
+                ({ratingCount.toLocaleString()})
+              </span>
+            )}
+          </div>
+          {pageCount && <span className="premium-pages">{pageCount} pp</span>}
         </div>
 
-        <div className="book-actions book-actions-pro">
+        <div className="premium-bottom-row">
+          <div className="premium-price-block">
+            <span>Price</span>
+            <strong>
+              {hasPrice ? `$${price.toLocaleString()}` : "Price —"}
+            </strong>
+          </div>
+
           <button
             type="button"
-            className={`book-action-btn cart-action ${isForSale ? "available" : "disabled"}`}
+            className={`premium-cart-btn ${isForSale ? "available" : "disabled"}`}
             disabled={!isForSale}
             onClick={(event) => {
               event.stopPropagation();
@@ -216,32 +319,20 @@ function BookCard({ book, isFavorite, onFavorite, onOpen, onAddToCart }) {
             }}
             title={isForSale ? "Add to cart" : "Not available for purchase"}
           >
-            <span aria-hidden="true">🛒</span><span>Add to Cart</span>
-          </button>
-
-          <button
-            type="button"
-            className="book-action-btn review-action"
-            onClick={openBook}
-            title="Rate and comment on this book"
-          >
-            <span aria-hidden="true">★</span><span>Rate &amp; Comment</span>
-          </button>
-
-          <button
-            type="button"
-            className={`book-action-btn favorite-action ${isFavorite ? "active" : ""}`}
-            onClick={(event) => {
-              event.stopPropagation();
-              onFavorite(book);
-            }}
-            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
-            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-            aria-pressed={isFavorite}
-          >
-            <span aria-hidden="true">{isFavorite ? "♥" : "♡"}</span>
+            <CartIcon />
+            <span>Add to Cart</span>
           </button>
         </div>
+
+        <button
+          type="button"
+          className="premium-review-btn"
+          onClick={openBook}
+          title="Rate and comment on this book"
+        >
+          <StarIcon />
+          <span>Rate &amp; Comment</span>
+        </button>
       </div>
     </article>
   );
@@ -265,7 +356,7 @@ function BookCarousel({
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  const visibleBooks = useMemo(() => (books || []).slice(0, 18), [books]);
+  const visibleBooks = useMemo(() => (books || []).slice(0, 30), [books]);
 
   const sectionKind = title === "Popular Books" ? "popular" : "suggested";
 
@@ -299,7 +390,9 @@ function BookCarousel({
 
   if (loading) {
     return (
-      <section className={`book-section discovery-section discovery-${sectionKind}`}>
+      <section
+        className={`book-section discovery-section discovery-${sectionKind}`}
+      >
         <div className="discovery-section-heading">
           <div>
             <span className="discovery-eyebrow">
@@ -326,11 +419,15 @@ function BookCarousel({
   if (!visibleBooks.length) return null;
 
   return (
-    <section className={`book-section discovery-section discovery-${sectionKind}`}>
+    <section
+      className={`book-section discovery-section discovery-${sectionKind}`}
+    >
       <div className="discovery-section-heading">
         <div>
           <span className="discovery-eyebrow">
-            {sectionKind === "suggested" ? "PERSONALIZED PICKS" : "COMMUNITY FAVORITES"}
+            {sectionKind === "suggested"
+              ? "PERSONALIZED PICKS"
+              : "COMMUNITY FAVORITES"}
           </span>
           <h2>{title}</h2>
           {subtitle && <p>{subtitle}</p>}
@@ -399,38 +496,74 @@ function BookCarousel({
    BOOK GRID
 ====================================================== */
 
-function BookGrid({
-  title,
+function DatabaseBookRow({
   books,
   favorites,
   onFavorite,
   onOpen,
   onAddToCart,
+  rowIndex = 0,
 }) {
-  if (!books || books.length === 0) {
-    return null;
-  }
+  const scrollRef = useRef(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollButtons = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const handleResize = () => updateScrollButtons();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [books.length]);
+
+  const scrollByAmount = (direction) => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const cardWidth = el.querySelector(".book-card")?.offsetWidth || 188;
+    const gap = 12;
+
+    el.scrollBy({
+      left: direction * (cardWidth * 5 + gap * 4),
+      behavior: "smooth",
+    });
+  };
 
   return (
-    <section className="book-section">
-      <div className="section-header">
-        <div>
-          <h2>{title}</h2>
-          <p>Discover books you may enjoy</p>
-        </div>
+    <div className="book-carousel-wrapper discovery-carousel database-book-row">
+      {canScrollLeft && (
+        <button
+          type="button"
+          className="scroll-arrow scroll-arrow-left discovery-arrow"
+          onClick={() => scrollByAmount(-1)}
+          aria-label={`Scroll database books row ${rowIndex + 1} left`}
+        >
+          ‹
+        </button>
+      )}
 
-        <span className="book-count">{books.length} books</span>
-      </div>
-
-      <div className="book-grid">
+      <div
+        className="book-carousel"
+        ref={scrollRef}
+        onScroll={updateScrollButtons}
+        aria-label={`Database books row ${rowIndex + 1}`}
+      >
         {books.map((book, index) => {
           const identifier = getBookIdentifier(book);
-
           const key =
             identifier ||
             book.google_book_id ||
             book.google_id ||
-            `${book.title || "book"}-${index}`;
+            `${book.title || "book"}-${rowIndex}-${index}`;
 
           return (
             <BookCard
@@ -443,6 +576,77 @@ function BookGrid({
             />
           );
         })}
+      </div>
+
+      {canScrollRight && (
+        <button
+          type="button"
+          className="scroll-arrow scroll-arrow-right discovery-arrow"
+          onClick={() => scrollByAmount(1)}
+          aria-label={`Scroll database books row ${rowIndex + 1} right`}
+        >
+          ›
+        </button>
+      )}
+    </div>
+  );
+}
+
+/* ======================================================
+   DATABASE BOOK SHELVES
+   Every database row contains up to 30 books and is
+   horizontally swipeable, using the same BookCard UI as
+   Suggested For You / Popular Books.
+====================================================== */
+
+function BookGrid({
+  title,
+  books,
+  favorites,
+  onFavorite,
+  onOpen,
+  onAddToCart,
+}) {
+  if (!books || books.length === 0) {
+    return null;
+  }
+
+  const rows = [];
+  for (let i = 0; i < books.length; i += 30) {
+    rows.push(books.slice(i, i + 30));
+  }
+
+  return (
+    <section className="book-section database-books-section">
+      <div className="section-header database-books-header">
+        <div>
+          <span className="database-books-eyebrow">BOOKWISE LIBRARY</span>
+          <h2>{title}</h2>
+          <p>
+            {title === "Search Results"
+              ? "Swipe left or right to explore your results"
+              : "Explore our complete library — swipe left or right to browse"}
+          </p>
+        </div>
+
+        <div className="database-books-meta">
+          <span className="book-count">{books.length} books</span>
+          <span className="database-swipe-hint">← Swipe →</span>
+        </div>
+      </div>
+
+      <div className="database-book-shelves">
+        {rows.map((rowBooks, rowIndex) => (
+          <DatabaseBookRow
+            key={`database-row-${rowIndex}`}
+            books={rowBooks}
+            favorites={favorites}
+            onFavorite={onFavorite}
+            onOpen={onOpen}
+            onAddToCart={onAddToCart}
+            rowIndex={rowIndex}
+          />
+        ))}
       </div>
     </section>
   );
@@ -2869,7 +3073,10 @@ function SupportWidget({ user, books = [] }) {
         data.conversation?.status_mode ||
         data.conversation?.support_mode;
 
-      if (serverMode === "agent" || data.conversation?.status === "open_agent") {
+      if (
+        serverMode === "agent" ||
+        data.conversation?.status === "open_agent"
+      ) {
         setMode("agent");
       }
 
@@ -2898,7 +3105,9 @@ function SupportWidget({ user, books = [] }) {
     return () => clearInterval(timer);
   }, [open, conversationId, mode, identityKey]);
 
-  const createAgentConversation = async (handoffReason = "Customer requested advanced assistance.") => {
+  const createAgentConversation = async (
+    handoffReason = "Customer requested advanced assistance.",
+  ) => {
     const response = await fetch(`${API_URL}/api/support/conversations`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...authHeaders() },
@@ -2930,23 +3139,40 @@ function SupportWidget({ user, books = [] }) {
 
   const getLocalAiReply = (text) => {
     const query = text.toLowerCase();
-    const matchingBooks = suggestedBooks.filter((book) => {
-      const haystack = `${book.title || ""} ${book.author || ""} ${book.description || ""}`.toLowerCase();
-      return query.split(/\s+/).some((word) => word.length > 2 && haystack.includes(word));
-    }).slice(0, 4);
+    const matchingBooks = suggestedBooks
+      .filter((book) => {
+        const haystack =
+          `${book.title || ""} ${book.author || ""} ${book.description || ""}`.toLowerCase();
+        return query
+          .split(/\s+/)
+          .some((word) => word.length > 2 && haystack.includes(word));
+      })
+      .slice(0, 4);
 
-    if (/(recommend|suggest|what should|book for me|read next|similar)/i.test(text)) {
+    if (
+      /(recommend|suggest|what should|book for me|read next|similar)/i.test(
+        text,
+      )
+    ) {
       if (matchingBooks.length) {
         return `Absolutely. Based on the books currently in the BookWise database, you could try:\n\n${matchingBooks
-          .map((book) => `• ${book.title || "Untitled"} — ${book.author || "Unknown author"}`)
+          .map(
+            (book) =>
+              `• ${book.title || "Untitled"} — ${book.author || "Unknown author"}`,
+          )
           .join("\n")}\n\nOpen any book card to see its details and ratings.`;
       }
 
       if (suggestedBooks.length) {
         return `I can help you discover your next read. Here are some strong books from our current database:\n\n${suggestedBooks
           .slice(0, 3)
-          .map((book) => `• ${book.title || "Untitled"} — ${book.author || "Unknown author"}`)
-          .join("\n")}\n\nTell me a genre, author, or topic you like and I'll narrow it down.`;
+          .map(
+            (book) =>
+              `• ${book.title || "Untitled"} — ${book.author || "Unknown author"}`,
+          )
+          .join(
+            "\n",
+          )}\n\nTell me a genre, author, or topic you like and I'll narrow it down.`;
       }
 
       return "Tell me what you enjoy reading—genre, author, topic, or mood—and I'll help you find a book.";
@@ -3000,7 +3226,10 @@ function SupportWidget({ user, books = [] }) {
           return String(data.reply);
         }
       } catch (aiError) {
-        console.warn("Optional AI endpoint unavailable; using BookWise fallback.", aiError);
+        console.warn(
+          "Optional AI endpoint unavailable; using BookWise fallback.",
+          aiError,
+        );
       }
     }
 
@@ -3127,12 +3356,20 @@ function SupportWidget({ user, books = [] }) {
         <div className="support-widget">
           <div className="support-header">
             <div className="support-header-identity">
-              <div className="support-bot-avatar">{mode === "bot" ? "✦" : "♟"}</div>
+              <div className="support-bot-avatar">
+                {mode === "bot" ? "✦" : "♟"}
+              </div>
               <div>
-                <strong>{mode === "bot" ? "BookWise AI Assistant" : "BookWise Agent Support"}</strong>
+                <strong>
+                  {mode === "bot"
+                    ? "BookWise AI Assistant"
+                    : "BookWise Agent Support"}
+                </strong>
                 <span>
                   <i className="support-online-dot" />
-                  {mode === "bot" ? "Instant help · AI first" : "Agent queue · conversation open"}
+                  {mode === "bot"
+                    ? "Instant help · AI first"
+                    : "Agent queue · conversation open"}
                 </span>
               </div>
             </div>
@@ -3159,7 +3396,9 @@ function SupportWidget({ user, books = [] }) {
                   : "Only an administrator can end this support conversation."}
               </span>
             </div>
-            <span className={`support-mode-pill ${mode === "agent" ? "agent" : ""}`}>
+            <span
+              className={`support-mode-pill ${mode === "agent" ? "agent" : ""}`}
+            >
               {mode === "bot" ? "AI" : "AGENT"}
             </span>
           </div>
@@ -3175,13 +3414,22 @@ function SupportWidget({ user, books = [] }) {
                   or how to use BookWise.
                 </p>
                 <div className="support-ai-suggestions">
-                  <button type="button" onClick={() => setDraft("Recommend a book for me")}>
+                  <button
+                    type="button"
+                    onClick={() => setDraft("Recommend a book for me")}
+                  >
                     📚 Recommend a book
                   </button>
-                  <button type="button" onClick={() => setDraft("How do ratings work?")}>
+                  <button
+                    type="button"
+                    onClick={() => setDraft("How do ratings work?")}
+                  >
                     ⭐ Ratings & favorites
                   </button>
-                  <button type="button" onClick={() => setDraft("Help me with an order")}>
+                  <button
+                    type="button"
+                    onClick={() => setDraft("Help me with an order")}
+                  >
                     🛒 Order help
                   </button>
                 </div>
@@ -3229,7 +3477,9 @@ function SupportWidget({ user, books = [] }) {
             <div className="support-handoff-card support-ai-handoff">
               <div>
                 <strong>Need advanced help?</strong>
-                <span>Transfer this conversation to the administrator inbox.</span>
+                <span>
+                  Transfer this conversation to the administrator inbox.
+                </span>
               </div>
               <button
                 type="button"
@@ -3246,7 +3496,9 @@ function SupportWidget({ user, books = [] }) {
               <span>●</span>
               <div>
                 <strong>Agent mode is active</strong>
-                <small>The administrator controls when this conversation ends.</small>
+                <small>
+                  The administrator controls when this conversation ends.
+                </small>
               </div>
             </div>
           )}
@@ -4027,7 +4279,6 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
       setSupportLoading(false);
     }
   };
-
 
   const closeSupportConversation = async () => {
     if (!supportConversation || closingSupportId) return;
@@ -5775,12 +6026,14 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
                         <p>{conversation.last_message || "No message"}</p>
                         <span
                           className={
-                            String(conversation.status || "").toLowerCase() === "closed"
+                            String(conversation.status || "").toLowerCase() ===
+                            "closed"
                               ? "support-list-status closed"
                               : "support-list-status"
                           }
                         >
-                          {String(conversation.status || "").toLowerCase() === "closed"
+                          {String(conversation.status || "").toLowerCase() ===
+                          "closed"
                             ? "Closed"
                             : "Needs attention"}
                         </span>
@@ -5801,7 +6054,9 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
                     <div className="support-admin-chat-header">
                       <div className="support-admin-customer">
                         <div className="support-conversation-avatar large">
-                          {(supportConversation.customer_name || "G").slice(0, 1).toUpperCase()}
+                          {(supportConversation.customer_name || "G")
+                            .slice(0, 1)
+                            .toUpperCase()}
                         </div>
                         <div>
                           <strong>
@@ -5819,7 +6074,9 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
 
                       <div className="support-admin-header-actions">
                         <span className="support-agent-pill">
-                          {String(supportConversation.status || "").toLowerCase() === "closed"
+                          {String(
+                            supportConversation.status || "",
+                          ).toLowerCase() === "closed"
                             ? "CLOSED"
                             : "OPEN"}
                         </span>
@@ -5871,14 +6128,18 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
                           }
                         }}
                         placeholder={
-                          String(supportConversation.status || "").toLowerCase() === "closed"
+                          String(
+                            supportConversation.status || "",
+                          ).toLowerCase() === "closed"
                             ? "Conversation ended by administrator"
                             : "Reply to customer..."
                         }
                         maxLength={2000}
                         disabled={
                           supportLoading ||
-                          String(supportConversation.status || "").toLowerCase() === "closed"
+                          String(
+                            supportConversation.status || "",
+                          ).toLowerCase() === "closed"
                         }
                       />
                       <button
@@ -5887,7 +6148,9 @@ function AdminDashboard({ user, token, onLogout, onBackToBookWise }) {
                         disabled={
                           supportLoading ||
                           !supportDraft.trim() ||
-                          String(supportConversation.status || "").toLowerCase() === "closed"
+                          String(
+                            supportConversation.status || "",
+                          ).toLowerCase() === "closed"
                         }
                       >
                         Reply
@@ -6840,7 +7103,8 @@ function App() {
       // page load. This is intentionally done here so it cannot break the
       // component render or create an effect loop.
       const booksWithCovers = bookList.filter(
-        (book) => book && typeof book.cover_url === "string" && book.cover_url.trim(),
+        (book) =>
+          book && typeof book.cover_url === "string" && book.cover_url.trim(),
       );
 
       const shuffled = [...booksWithCovers].sort(() => Math.random() - 0.5);
@@ -6850,10 +7114,22 @@ function App() {
         setHeroBooks(selectedHeroBooks);
       } else {
         const fallbackBooks = [
-          { cover_url: "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg" },
-          { cover_url: "https://covers.openlibrary.org/b/isbn/9780857197689-L.jpg" },
-          { cover_url: "https://covers.openlibrary.org/b/isbn/9781455586691-L.jpg" },
-          { cover_url: "https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg" },
+          {
+            cover_url:
+              "https://covers.openlibrary.org/b/isbn/9780735211292-L.jpg",
+          },
+          {
+            cover_url:
+              "https://covers.openlibrary.org/b/isbn/9780857197689-L.jpg",
+          },
+          {
+            cover_url:
+              "https://covers.openlibrary.org/b/isbn/9781455586691-L.jpg",
+          },
+          {
+            cover_url:
+              "https://covers.openlibrary.org/b/isbn/9780062316097-L.jpg",
+          },
         ];
         setHeroBooks([...selectedHeroBooks, ...fallbackBooks].slice(0, 4));
       }
@@ -6882,7 +7158,9 @@ function App() {
 
   const displayedHeroBooks = useMemo(() => {
     if (!heroBooks.length) return [];
-    return heroBooks.map((_, index) => heroBooks[(index + heroOffset) % heroBooks.length]);
+    return heroBooks.map(
+      (_, index) => heroBooks[(index + heroOffset) % heroBooks.length],
+    );
   }, [heroBooks, heroOffset]);
 
   /* ====================================================
@@ -6950,7 +7228,6 @@ function App() {
     }
   };
 
-
   /*
    * DATABASE-FIRST discovery fallbacks.
    * If a recommendation/discovery endpoint is empty or unavailable, both
@@ -6971,7 +7248,7 @@ function App() {
         const yearB = Number(b.published_year || 0);
         return ratingB - ratingA || yearB - yearA;
       })
-      .slice(0, 18);
+      .slice(0, 30);
   }, [books, favorites]);
 
   const databasePopularBooks = useMemo(() => {
@@ -6981,7 +7258,7 @@ function App() {
         const ratingB = Number(b.average_rating || 0);
         return ratingB - ratingA;
       })
-      .slice(0, 18);
+      .slice(0, 30);
   }, [books]);
 
   // Keep both discovery shelves tied directly to the database books already
@@ -7937,7 +8214,10 @@ function App() {
                 <div className="hero-book-glow hero-book-glow-two" />
 
                 {[0, 1, 2, 3].map((index) => (
-                  <div key={index} className={`hero-book hero-book-${index + 1}`}>
+                  <div
+                    key={index}
+                    className={`hero-book hero-book-${index + 1}`}
+                  >
                     <img
                       src={displayedHeroBooks[index]?.cover_url}
                       alt=""
